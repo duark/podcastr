@@ -2,7 +2,7 @@ import { format, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import Image from 'next/image';
 import Link from 'next/link';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, GetStaticPaths } from 'next';
 import { api } from '../../services/api';
 import { convertDurationToTimeString } from '../../utils/convertDurationToTimeString';
 import { useRouter } from 'next/router';
@@ -27,12 +27,7 @@ type EpisodeProps = {
     episode: Episode;
 }
 
-export const getStaticPaths: GetStaticProps = async () => {
-    return {
-        paths: [],
-        fallback: 'blocking'
-    }
-}
+
 
 export default function Episode ({ episode }: EpisodeProps) {
     
@@ -61,6 +56,13 @@ export default function Episode ({ episode }: EpisodeProps) {
         </div>
     )
 
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+    return {
+        paths: [],
+        fallback: 'blocking'
+    }
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
