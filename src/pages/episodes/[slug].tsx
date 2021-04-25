@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { api } from '../../services/api';
 import { convertDurationToTimeString } from '../../utils/convertDurationToTimeString';
-
+import { useRouter } from 'next/router';
 import styles from './episode.module.scss';
 import { usePlayer } from '../../contexts/PlayerContext';
 import React from 'react';
@@ -33,6 +33,12 @@ type EpisodeProps = {
 
 export default function Episode ({ episode }: EpisodeProps) {
     
+    const router = useRouter();
+
+    if (router.isFallback) {
+        return <p>Carregando...</p>
+    }
+
     const { play } = usePlayer();
 
     return (
@@ -67,9 +73,24 @@ export default function Episode ({ episode }: EpisodeProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+    
+    const { data } = await api.get('episodes', {
+        params: {
+          _limit: 2,
+          _sort: 'published_at',
+          _order: 'desc'
+        }
+      })
+    
+    const paths = data.map(episode => {
+        return {
+            params: { slug: episode.id }
+        }
+    })
+    
     return {
-        paths: [],
-        fallback: 'blocking'
+        paths,
+        fallback: 'blocking' // false,  true & blocking
     }
 }
 
